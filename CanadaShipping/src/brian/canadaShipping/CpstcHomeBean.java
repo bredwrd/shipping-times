@@ -188,7 +188,7 @@ public class CpstcHomeBean implements Serializable {
 
 			// display resulting output
 			selectedOutputDate = calculatedArrivalEndDate;
-			pageResult += " business days, or by ";
+			pageResult += " business days";
 			displayOutput = true;
 			
 		} catch(ArrayIndexOutOfBoundsException e)
