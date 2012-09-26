@@ -1,0 +1,66 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:icecore="http://www.icefaces.org/icefaces/core"
+	xmlns:ace="http://www.icefaces.org/icefaces/components"
+	xmlns:ice="http://www.icesoft.com/icefaces/component">
+<h:head>
+	<title>Canada Post Shipping Time Calculator</title>
+	<link rel="stylesheet" type="text/css"
+		href="./xmlhttp/css/rime/rime.css" />
+</h:head>
+<h:body>
+	<h:form id="form">
+
+			<h:panelGrid columns="3"
+				style="margin-left: auto; margin-right: auto; text-align: center"
+				width="98">
+
+				<ace:panel header="Origin" style="height:200px">
+
+				<h:panelGrid
+						style="display:inline-block margin-left: 0; margin-right: 0; text-align: left;"
+						width="99">
+						<ace:textEntry value="#{home.userOriginPcName}"
+							label="Postal Code" labelPosition="inField" required="true"
+							indicatorPosition="right" width="100px"
+							style="display:inline-block" />
+						<br/>
+						<br/>
+					<ace:dateTimeEntry label="Shipped date" labelPosition="top"
+							id="cal" value="#{home.selectedInputDate}"
+							timeZone="Canada/Eastern" pattern="MMM/dd/yyyy"
+							renderAsPopup="true" width="100px" style="display:inline-block"
+							title="Change shipped date." />
+					</h:panelGrid>
+				</ace:panel>
+				<ice:graphicImage value="./Images/arrow_right_16.png"
+					style="padding-left: 5px; padding-right: 5px;" />
+				<ace:panel header="Destination" style="height:200px">
+					<ace:textEntry value="#{home.userDestinationPcName}"
+						label="Postal Code" labelPosition="inField" required="true" />
+					<ace:pushButton actionListener="#{home.submitAction}" type="submit"
+						value="Submit" />
+					<br/>
+					<h:panelGrid columns="2" style="display:inline-block margin-left: 0; margin-right: 0; text-align: left;">
+						<ace:dateTimeEntry id="outputCal" label="Arrival Date"
+							labelPosition="top"
+							value="#{home.selectedOutputDate}" timeZone="Canada/Mountain"
+							pattern="MMM/dd/yyyy" mindate="#{home.calculatedArrivalBeginDate}"
+							maxdate="#{home.calculatedArrivalEndDate}" readonly="true"
+							readOnlyInputText="true" renderAsPopup="true"
+							rendered="#{home.displayOutput}" />
+						<ice:outputText value="#{home.pageResult}"
+							rendered="#{home.displayOutput}" />
+					</h:panelGrid>
+				</ace:panel>
+
+			</h:panelGrid>
+			
+
+	</h:form>
+</h:body>
+</html>
