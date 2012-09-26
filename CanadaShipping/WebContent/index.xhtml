@@ -45,7 +45,7 @@
 					<ace:pushButton tabindex="4" actionListener="#{home.submitAction}" type="submit"
 						value="Submit" />
 					<br/>
-					<h:panelGrid columns="2" style="display:inline-block margin-left: 0; margin-right: 0; text-align: left;">
+					<h:panelGrid columns="1" style="display:inline-block margin-left: 0; margin-right: 0; text-align: left;">
 						<ace:dateTimeEntry id="outputCal" label="Arrival Date"
 							labelPosition="top"
 							value="#{home.selectedOutputDate}" timeZone="Canada/Mountain"
@@ -54,7 +54,7 @@
 							readOnlyInputText="true" renderAsPopup="true"
 							rendered="#{home.displayOutput}" />
 						<ice:outputText value="#{home.pageResult}"
-							rendered="#{home.displayOutput}" />
+							rendered="#{home.displayOutput}" style="font-size:small" />
 					</h:panelGrid>
 				</ace:panel>
 
