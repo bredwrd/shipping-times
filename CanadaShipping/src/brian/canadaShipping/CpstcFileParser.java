@@ -26,8 +26,13 @@ public class CpstcFileParser {
 	private static final String dirtyDpfHtmlFilePath = "/tmp/brian/canadaShipping/dpfLookup.html";
 	private static final String cleanDpfHtmlFilePath = "/tmp/brian/canadaShipping/dpfLookup.xml";
 	
+	// Data for postal source/destinations definitions
 	private static NodeList remoteNodes;
 	private static NodeList dpfNodes;
+	private static NodeList majorUsCities;
+
+	
+	// GETTERS & SETTERS
 	
 	public static NodeList getRemoteNodes()
 	{
@@ -38,6 +43,13 @@ public class CpstcFileParser {
 	{
 		return dpfNodes;
 	}
+	
+	public static NodeList getMajorUsCities()
+	{
+		return majorUsCities;
+	}
+	
+	// METHODS
 	
 	public static void parseRemoteLookupFile()
 	{
@@ -98,5 +110,10 @@ public class CpstcFileParser {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+	}
+	
+	public static void parseMajorUsCitiesLookupFile()
+	{
+		// TODO parse Major U.S. Cities table from Canada Post
 	}
 }

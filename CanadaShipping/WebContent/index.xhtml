@@ -19,33 +19,98 @@
 				style="margin-left: auto; margin-right: auto; text-align: center"
 				width="98">
 
-				<ace:panel header="Origin" style="height:200px">
+				<ace:panel header="Origin" style="height:210px">
 
-				<h:panelGrid
-						style="display:inline-block margin-left: 0; margin-right: 0; text-align: left;"
-						width="99">
-						<ace:textEntry tabindex="1" value="#{home.userOriginPcName}"
-							label="Postal Code" labelPosition="inField" required="true"
-							indicatorPosition="right" width="100px"
-							style="display:inline-block" />
-						<br/>
-						<br/>
-					<ace:dateTimeEntry tabindex="3" label="Shipped date" labelPosition="top"
-							id="cal" value="#{home.selectedInputDate}"
-							timeZone="Canada/Eastern" pattern="MMM/dd/yyyy"
-							renderAsPopup="true" width="100px" style="display:inline-block"
-							title="Change shipped date." />
+					<h:panelGrid
+							style="display:inline-block margin-left: 0; margin-right: 0; text-align: left;"
+							width="99">
+							<ace:textEntry id="userOriginPcNameJsId" tabindex="1" value="#{home.userOriginPcName}"
+								label="Postal Code" labelPosition="inField" required="true"
+								indicatorPosition="right" width="100px"
+								style="display:inline-block" />
+							<br/>
+							<br/>
+						<ace:dateTimeEntry tabindex="3" label="Shipped date" labelPosition="top"
+								id="cal" value="#{home.selectedInputDate}"
+								timeZone="Canada/Eastern" pattern="MMM/dd/yyyy"
+								renderAsPopup="true" width="100px" style="display:inline-block"
+								title="Change shipped date." />
 					</h:panelGrid>
 				</ace:panel>
-				<ice:graphicImage value="./Images/arrow_right_16.png"
-					style="padding-left: 5px; padding-right: 5px;" />
-				<ace:panel header="Destination" style="height:200px">
-					<ace:textEntry tabindex="2" value="#{home.userDestinationPcName}"
-						label="Postal Code" labelPosition="inField" required="true" />
+				
+				<ace:panel>
+					<ice:graphicImage value="./Images/arrow_right_16.png"
+						style="padding-left: 5px; padding-right: 5px;" />
+					<ace:menuBar style="border:0px;" autoSubmenuDisplay="false">
+
+						<ace:multiColumnSubmenu label="#{home.userSelectedShippingType}">
+			                <ace:menuColumn>
+			                    <ace:submenu label="Domestic">
+			                        <ace:menuItem value="Lettermail" actionListener="#{home.changeUserSelectedShippingType}">
+			                        	<f:attribute name="destinationType" value="Domestic" />
+			                        	<f:attribute name="shippingType" value="Lettermail" />
+			                            <ace:ajax event="activate" execute="@this" render="form" />
+			                        </ace:menuItem>
+			                    </ace:submenu>
+			                    <ace:submenu label="U.S.A.">
+			                        <ace:menuItem value="XpressPost" actionListener="#{home.changeUserSelectedShippingType}">
+			                        	<f:attribute name="destinationType" value="USA" />
+			                        	<f:attribute name="shippingType" value="XpressPost" />
+			                            <ace:ajax event="activate" execute="@this" render="form" />
+			                        </ace:menuItem>
+			                    </ace:submenu>
+			                </ace:menuColumn>
+			            </ace:multiColumnSubmenu>
+		            </ace:menuBar>
+                </ace:panel>
+                
+				<ace:panel header="Destination" style="height:210px;">
+					<ace:panel style="border:0px; text-align:left;" visible="#{home.domesticDestinationPanelRendered}" >
+						<ace:textEntry tabindex="2" value="#{home.userDestinationPcName}"
+							label="Postal Code" labelPosition="top" required="#{home.domesticDestinationPanelRendered}"/>
+					</ace:panel>
+					<ace:panel style="border:0px" visible="#{home.usaDestinationPanelRendered}" >
+						<h:panelGrid columns="2" style="text-align:left;">
+							<ace:textEntry id="userSelectedUsStateContainerJsId" value="#{home.userSelectedUsStateCode}"
+									label="U.S. State" labelPosition="top" style="vertical-align:25px;" />
+	
+							<ice:graphicImage value="./Images/map_16.png"
+								style="padding-left: 2px; padding-right: 2px;" onclick="selectUsStateMapDialog.show();"/>
+						</h:panelGrid>
+
+
+						<ace:dialog id="selectUsStateMapDialogJsId"
+							   header="Select a State"
+                               widgetVar="selectUsStateMapDialog"
+                               closable="true"
+                               modal="false"
+                               draggable="false"
+                               showEffect="clip"
+                               hideEffect="fade"
+                               position="350,100">
+
+							<h:outputScript name="js/jquery-1.8.2.js" />
+							<h:outputScript name="js/raphael.js" />
+							<h:outputScript name="js/jquery.usmap.js" />
+							<script>
+								$(document).ready(function() {
+								    $('#usMap').usmap({
+										  // The click action
+										  click: function(event, data) {
+											  document.getElementsByName("form:userSelectedUsStateContainerJsId_input")[0].value=data.name;
+										  }
+								    });
+								  });
+							</script>
+							<div id="usMap" style="width: 300px; height: 200px;"></div>
+
+						</ace:dialog>
+					</ace:panel>
 					<ace:pushButton tabindex="4" actionListener="#{home.submitAction}" type="submit"
-						value="Submit" />
-					<br/>
+							value="Submit" style="dislay:block"/>
 					<h:panelGrid columns="1" style="display:inline-block margin-left: 0; margin-right: 0; text-align: left;">
+
+						<br/>
 						<ace:dateTimeEntry id="outputCal" label="Arrival Date"
 							labelPosition="top"
 							value="#{home.selectedOutputDate}" timeZone="Canada/Mountain"
@@ -59,8 +124,9 @@
 				</ace:panel>
 
 			</h:panelGrid>
-			
+				
 
+		
 	</h:form>
 </h:body>
 </html>

@@ -4,6 +4,7 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashSet;
+import java.util.Map;
 
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ViewScoped;
@@ -21,6 +22,20 @@ import net.objectlab.kit.datecalc.jdk.DateKitCalculatorsFactory;
 public class CpstcHomeBean implements Serializable {
 	
 	// VARIABLES
+	
+	// General
+
+	private String destinationType = "Domestic";
+	private String shippingType = "Lettermail";
+	private String userSelectedShippingType = shippingType + " (" + destinationType + ")";
+
+	// Rendered Panels
+	private boolean domesticDestinationPanelRendered = true;
+	private boolean usaDestinationPanelRendered = false;
+	private boolean selectUsStateMapDialogRendered = false;
+
+	// U.S. values
+	private String userSelectedUsStateCode = "";
 
 	private static final long serialVersionUID = 1L;
 	public String userOriginDpfName = "";
@@ -127,6 +142,43 @@ public class CpstcHomeBean implements Serializable {
 		this.userOriginDpfName = userSourceName;
 	}
 
+	public String getUserSelectedUsStateCode() {
+		return userSelectedUsStateCode;
+	}
+	
+	public void setUserSelectedUsStateCode(String userSelectedUsStateCode) {
+		this.userSelectedUsStateCode = userSelectedUsStateCode;
+	}
+	
+	public String getUserSelectedShippingType() {
+		return userSelectedShippingType;
+	}
+	
+	public boolean isDomesticDestinationPanelRendered() {
+		return domesticDestinationPanelRendered;
+	}
+
+	public void setDomesticDestinationPanelRendered(
+			boolean domesticDestinationPanelRendered) {
+		this.domesticDestinationPanelRendered = domesticDestinationPanelRendered;
+	}
+
+	public boolean isUsaDestinationPanelRendered() {
+		return usaDestinationPanelRendered;
+	}
+
+	public void setUsaDestinationPanelRendered(boolean usaDestinationPanelRendered) {
+		this.usaDestinationPanelRendered = usaDestinationPanelRendered;
+	}
+
+	public boolean isSelectUsStateMapDialogRendered() {
+		return selectUsStateMapDialogRendered;
+	}
+	
+	public void toggleSelectUsStateMapDialogRendered(ActionEvent evt)
+	{
+		selectUsStateMapDialogRendered = !selectUsStateMapDialogRendered;
+	}
 	
 	// CONSTRUCTOR
 	
@@ -150,6 +202,9 @@ public class CpstcHomeBean implements Serializable {
 	 */
 	public void submitAction(ActionEvent evt)
 	{	
+		// DEBUG
+		System.out.println("Selected state: " + userSelectedUsStateCode);
+		
 		pageResult = "";
 		totalTime = 0;
 		rangedArrivalDate = false;
@@ -215,6 +270,31 @@ public class CpstcHomeBean implements Serializable {
         dateCalculator.setStartDate(selectedInputDate);
         return (dateCalculator).moveByBusinessDays(daysToAdd).getCurrentBusinessDate();
     }
+    
+    public String selectUsState(String stateCode)
+    {
+    	System.out.println(stateCode);
+    	return "";
+    }
+    
+    public void changeUserSelectedShippingType(ActionEvent evt)
+    {
+		Map<String, Object> attributes = evt.getComponent().getAttributes();
+		String selectedShippingType = (String) attributes.get("shippingType");
+		String selectedDestinationType = (String) attributes.get("destinationType");
+		
+		if (selectedDestinationType.equals("Domestic"))
+		{
+			setUsaDestinationPanelRendered(false);
+			setDomesticDestinationPanelRendered(true);
+		} else if (selectedDestinationType.equals("USA"))
+		{
+			setDomesticDestinationPanelRendered(false);
+			setUsaDestinationPanelRendered(true);
+		}
+    	userSelectedShippingType = selectedShippingType + " (" + selectedDestinationType + ")";
+    }
+    
 
 
 }
