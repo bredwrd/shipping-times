@@ -5,23 +5,15 @@ import java.io.IOException;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.xpath.XPath;
-import javax.xml.xpath.XPathConstants;
-import javax.xml.xpath.XPathExpression;
-import javax.xml.xpath.XPathExpressionException;
-import javax.xml.xpath.XPathFactory;
+
 
 import org.htmlcleaner.CleanerProperties;
 import org.htmlcleaner.HtmlCleaner;
 import org.htmlcleaner.PrettyXmlSerializer;
 import org.htmlcleaner.TagNode;
-import org.w3c.dom.Document;
-import org.xml.sax.SAXException;
 
-/*
+
+/* 
  * This class primarily uses a library to convert 'dirty' html -> 'clean' xml
  * for parsing with xpath. Some files are parsable by xpath without cleaning, so
  * the use of this class may deprecated at some point.

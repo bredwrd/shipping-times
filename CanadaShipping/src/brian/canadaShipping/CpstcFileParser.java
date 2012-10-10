@@ -16,7 +16,8 @@ import org.w3c.dom.Document;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
-/* This class parses local html tables into RAM for use by the application's
+/* 
+ * This class parses local html tables into RAM for use by the application's
  * various lookups.
  */
 public class CpstcFileParser {

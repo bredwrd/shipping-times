@@ -4,7 +4,7 @@ import javax.faces.bean.ApplicationScoped;
 import javax.faces.bean.ManagedBean;
 import javax.faces.context.FacesContext;
 
-/*
+/* 
  * This class is run once during application initialization, and performs
  * long-running non-lazy initialization of data, such as reading html tables
  * from a hard disk or networked medium.

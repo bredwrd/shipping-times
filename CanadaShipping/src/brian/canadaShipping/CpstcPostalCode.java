@@ -6,7 +6,7 @@ import java.util.regex.Matcher;
 
 import org.w3c.dom.NodeList;
 
-/*
+/* 
  * This class stores and determines data associated with a Postal Code.
  * The postal code name will be "sanitized" from user input to a proper PC 
  * format (e.g. a1a-2b2 -> A1A2B2)

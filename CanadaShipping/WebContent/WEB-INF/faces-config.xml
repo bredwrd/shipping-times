@@ -5,22 +5,5 @@
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-facesconfig_2_0.xsd"
     version="2.0">
-	<managed-bean>
-		<managed-bean-name>home</managed-bean-name>
-		<managed-bean-class>brian.canadaShipping.CpstcHomeBean</managed-bean-class>
-		<managed-bean-scope>request</managed-bean-scope>
-	</managed-bean>
-	<managed-bean>
-		<description>handles initialization of pseudo-permanent data</description>
-		<managed-bean-name>cpstcApplicationBean</managed-bean-name>
-		<managed-bean-class>brian.canadaShipping.CpstcApplicationBean</managed-bean-class>
-		<managed-bean-scope>application</managed-bean-scope>
-	</managed-bean>
-	<managed-bean>
-		<description>- stores values such as selected U.S. state which require persistance greater than request scope but less than application scope.</description>
-		<managed-bean-name>sessionBean</managed-bean-name>
-		<managed-bean-class>brian.canadaShipping.CpstcSessionBean</managed-bean-class>
-		<managed-bean-scope>session</managed-bean-scope>
-	</managed-bean>
 
 </faces-config>

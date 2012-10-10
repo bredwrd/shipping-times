@@ -17,6 +17,9 @@ import net.objectlab.kit.datecalc.common.HolidayHandlerType;
 import net.objectlab.kit.datecalc.jdk.DateKitCalculatorsFactory;
 
 
+/*
+ * This class
+ */
 @ManagedBean(name= "home")
 @SessionScoped
 public class CpstcHomeBean implements Serializable {
