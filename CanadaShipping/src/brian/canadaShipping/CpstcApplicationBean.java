@@ -4,24 +4,37 @@ import javax.faces.bean.ApplicationScoped;
 import javax.faces.bean.ManagedBean;
 import javax.faces.context.FacesContext;
 
+/*
+ * This class is run once during application initialization, and performs
+ * long-running non-lazy initialization of data, such as reading html tables
+ * from a hard disk or networked medium.
+ */
 @ManagedBean(eager=true)
 @ApplicationScoped
 public class CpstcApplicationBean {
 
 	// VARIABLES
-	private static CpstcDedicatedProcessingFacility[] dpfGrid = new CpstcDedicatedProcessingFacility[CpstcDedicatedProcessingFacility.getNumOfDpf()];
+	
+	// array with a name of a DPF, with values of all DPF "base times" for Lettermail as the values
+	private static CpstcDedicatedProcessingFacility[] dpfGrid = 
+			new CpstcDedicatedProcessingFacility[CpstcDedicatedProcessingFacility.getNumOfDpf()]; 
+	
 	
 	// GETTERS & SETTERS
+	
 	public static CpstcDedicatedProcessingFacility[] getDpfGrid()
 	{
 		return dpfGrid;
 	}
 	
+	
 	// CONSTRUCTOR
+	
 	public CpstcApplicationBean()
 	{
 		super();
 		init();
+		// Debug
 		System.out.println("Hello, ApplicationBean!");
 		System.out.println("Context Path = " + FacesContext.getCurrentInstance().getExternalContext().getRequestContextPath());
 	}
@@ -36,10 +49,13 @@ public class CpstcApplicationBean {
 		CpstcFileParser.parseDpfLookupFile();
 	}
 	
+	/*
+	 *  initializes dpfGrid with values from Delivery Standards site
+	 */
 	private void setupDpfGrid()
 	{
-		// Canada Post only provides an image of a table, so hardcoded for now
-		// TODO- implement OCR to parse table image -> csv
+		// HTML document only contains an image, no parsable text, so hardcoded
+		// TODO- parse data from pdf available from Delivery Standards site
 		CpstcDedicatedProcessingFacility dpfCalgary = new CpstcDedicatedProcessingFacility("CalgaryAB", 			2, 4, 3, 4, 4, 4, 5, 6, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4);
 		dpfGrid[CpstcDedicatedProcessingFacility.getNextIndex()] = dpfCalgary;
 		CpstcDedicatedProcessingFacility dpfCharlottetown = new CpstcDedicatedProcessingFacility("CharlottetownPE", 4, 2, 4, 4, 3, 4, 4, 6, 4, 4, 3, 4, 4, 4, 4, 3, 4, 3, 4, 4, 4, 4, 4, 4, 4);

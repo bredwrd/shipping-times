@@ -1,23 +1,28 @@
 package brian.canadaShipping;
 
-import java.util.Date;
 import java.util.Locale;
 import java.util.regex.Pattern;
 import java.util.regex.Matcher;
 
 import org.w3c.dom.NodeList;
 
+/*
+ * This class stores and determines data associated with a Postal Code.
+ * The postal code name will be "sanitized" from user input to a proper PC 
+ * format (e.g. a1a-2b2 -> A1A2B2)
+ */
 public class CpstcPostalCode {
+	// From table 2, stores if a PC is remote (which adds 1-4 days to delivery time)
 	public boolean remote;
 	
-	private String name = "";
+	private String name = ""; // 'name' of PC (e.g. A1A1A1)
 	private String fsaName = ""; // Forward Station Area (e.g. A1A)
 	private String lduName = ""; // Local Delivery Unit (e.g. 1A1)
 	private String dpfName = ""; // Dedicated Processing Facility (e.g. LondonON)
-	private String geoArea = ""; // TODO
+	private String geoArea = ""; // TODO- for domestic parcel support
 	private boolean valid = false; // format ok?
-	private boolean major = false;
-	CpstcFsa fsa;
+	private boolean major = false; // is a major (true) or minor (false) PC (can add time)
+	CpstcFsa fsa; // creates Fsa object, since it is a complex piece of information
 	
 	// returns if postal code is valid and exists	 
 	public boolean isValid() {
@@ -64,7 +69,9 @@ public class CpstcPostalCode {
 		remote = determineIfRemote();
 	}
 	
-	// determines if postal code is valid and exists
+	/*
+	 *  determines if postal code is valid and exists
+	 */
 	private boolean determineIfValidPostalCode()
 	{
 		boolean rtnBoolean = false;
@@ -79,8 +86,10 @@ public class CpstcPostalCode {
 		return rtnBoolean;
 	}
 	
-	// selects, converts to upper case, and returns the first 6 alphanumeric chars
-	// returns "" if six alphanumeric chars aren't found
+	/*
+	 *  selects, converts to upper case, and returns the first 6 alphanumeric chars
+	 *  returns "" if six alphanumeric chars aren't found
+	 */
 	private String sanitizeName(String unsanitizedName)
 	{
 		String rtnString = "";
@@ -96,9 +105,10 @@ public class CpstcPostalCode {
 		return rtnString;
 	}
 	
-	
-	// selects and returns first 3 alphanumeric chars (AKA FSA)
-	// returns "" if a valid FSA isn't found
+	/*
+	 * selects and returns first 3 alphanumeric chars (AKA FSA)
+	 *  returns "" if a valid FSA isn't found
+	 */
 	private String determineFsa(String postalCodeName)
 	{
 		String rtnString = "";
@@ -112,8 +122,11 @@ public class CpstcPostalCode {
 		return rtnString;
 	}
 	
-	// selects and returns last 3 alphanumeric chars (AKA LDU)
-	// returns "" if a valid LDU isn't found
+	/*
+	 *  selects and returns last 3 alphanumeric chars (AKA LDU)
+	 *  returns "" if a valid LDU isn't found
+	 */
+
 	private String determineLdu(String postalCodeName)
 	{
 		String rtnString = "";
@@ -127,7 +140,9 @@ public class CpstcPostalCode {
 		return rtnString;
 	}
 	
-	// sets remote by using LDU and DPF
+	/*
+	 *  sets remote by using LDU and DPF
+	 */
 	private boolean determineIfRemote()
 	{
 		boolean rtnBoolean = false;
@@ -140,11 +155,13 @@ public class CpstcPostalCode {
 			NodeList remoteLookupNodes = CpstcFileParser.getRemoteNodes();
 		    for (int idx = 0; idx < remoteLookupNodes.getLength(); idx += 2) {
 		    	String tmpFsaData = remoteLookupNodes.item(idx).getTextContent();
+		    	// First, match FSA, and if it matches, then try to match LDU
 		    	if (tmpFsaData.contains(fsaName))
 		    	{
 		    		String tmpLduData = remoteLookupNodes.item(idx + 1).getTextContent();
 		    		if (tmpLduData.contains(lduName) || (tmpLduData.contains("-") && determineIfRangedListContainsLdu(tmpLduData)))
     				{
+		    			// is remote
 		    			rtnBoolean = true;
 		    			break;
     				}
@@ -155,30 +172,67 @@ public class CpstcPostalCode {
 		return rtnBoolean;
 	}
 	
-	// checks a list containing a mix of individual and ranged LDUs
-	// and determines if the fsaName is contained within that list
+	/*
+	 *  returns DPF name which outgoing USA Xpresspost from this PC is sent through
+	 */
+	public String determineXpresspostUsaOutgoingDpfNode()
+	{
+		boolean tmpMatchFound = false;
+		String rtnString = "";
+		
+		NodeList xpressPostUsaDpfNodes = CpstcFileParser.getRemoteNodes();
+	    for (int idx = 0; idx < xpressPostUsaDpfNodes.getLength(); idx += 11) {
+	    	for (int jdx = 0; jdx < 11; jdx += 2)
+	    	{
+	    		String tmpPcList = xpressPostUsaDpfNodes.item(idx).getTextContent();
+		    	if (tmpPcList.contains(fsaName))
+		    	{
+		    		// TODO - complete US Xpresspost back-end support
+		    		//String tmpLduData = remoteLookupNodes.item(idx + 1).getTextContent();
+		    		//if (tmpLduData.contains(lduName) || (tmpLduData.contains("-") && determineIfRangedListContainsLdu(tmpLduData)))
+					//{
+		    		//	tmpMatchFound = true;
+		    		//	break;
+					//}
+		    	}
+	    	}
+	    }
+		
+		return rtnString;
+	}
+	
+	/* checks a list containing a mix of individual and ranged LDUs
+	 * and determines if the fsaName is contained within that list
+	 */
 	private boolean determineIfRangedListContainsLdu( String listToCheck)
 	{
 		boolean rtnBoolean = false;
 		
+		// pattern matching any ranged LDU list (e.g. A1A-2B2)
 		Pattern fsaRangePattern = Pattern.compile("\\d[A-Z]\\d-\\d[A-Z]\\d");
 		Matcher fsaRangeMatcher = fsaRangePattern.matcher(listToCheck);
 		while (fsaRangeMatcher.find() && !rtnBoolean)
 		{
+			// ranged LDU list found and match is not found
+			
 			String tmpFsaRange = fsaRangeMatcher.group();
 			
+			// initialize pattern and variable for start of range (e.g. A1A)
 			Pattern rangeStartPattern = Pattern.compile("^\\d[A-Z]\\d");
 			Matcher rangeStartMatcher = rangeStartPattern.matcher(tmpFsaRange);
 			rangeStartMatcher.find();
 			String tmpRangeStart = rangeStartMatcher.group();
 			
+			// initialize pattern and variable for end of range (e.g. B2B)
 			Pattern rangeEndPattern = Pattern.compile("\\d[A-Z]\\d$");
 			Matcher rangeEndMatcher = rangeEndPattern.matcher(tmpFsaRange);
 			rangeEndMatcher.find();
 			String tmpRangeEnd = rangeEndMatcher.group();
 			
+			// check if the LDU in question is within the start - end range
 			if (lduName.compareTo(tmpRangeStart) > 0 && lduName.compareTo(tmpRangeEnd) < 0)
 			{
+				// match found
 				rtnBoolean = true;
 			}
 		}

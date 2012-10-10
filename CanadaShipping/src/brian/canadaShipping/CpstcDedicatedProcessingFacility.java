@@ -1,5 +1,8 @@
 package brian.canadaShipping;
 
+/*
+ * This class contains data pertaining to a DPF, e.g. the base time between DPFs.
+ */
 public class CpstcDedicatedProcessingFacility {
 	
 	

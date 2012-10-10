@@ -21,11 +21,17 @@ import org.htmlcleaner.TagNode;
 import org.w3c.dom.Document;
 import org.xml.sax.SAXException;
 
+/*
+ * This class primarily uses a library to convert 'dirty' html -> 'clean' xml
+ * for parsing with xpath. Some files are parsable by xpath without cleaning, so
+ * the use of this class may deprecated at some point.
+ */
 public class CpstcHtmlCleaner {
 	private static File htmlFileToClean;
 	
-	// takes an html file, converts to validated xml
-	// andsaves it as <fileName>.xml
+	/* takes an html file, converts to validated xml
+	 * and saves it as <fileName>.xml
+	 */
 	public static void cleanHtmlFile(File htmlFile)
 	{
 		htmlFileToClean = htmlFile;
@@ -54,8 +60,9 @@ public class CpstcHtmlCleaner {
 		}
 	}
 	
-	// taking a <fileName>.<ext> filename, 
-	// converts to and returns <fileName>.xml
+	/* taking a <fileName>.<ext> filename, 
+	 * converts to and returns <fileName>.xml
+	 */
 	private static String convertFilenameToXml(String filename)
 	{
 		String rtnString = "";
@@ -74,7 +81,7 @@ public class CpstcHtmlCleaner {
 
 	 
 
-	
+	// Sample code for HtmlCleaner. Leave in for now as a reference of the library's abilities.
 	/*
 	// optionally find parts of the DOM or modify some nodes
 	TagNode[] myNodes = node.getElementsByXXX(...);

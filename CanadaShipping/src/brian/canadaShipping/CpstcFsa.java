@@ -1,6 +1,9 @@
 package brian.canadaShipping;
 // This class is a Forward Station Area, or the first three digits of a postal code.
 
+/*
+ * This class contains data pertaining to an FSA belonging to a PC
+ */
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -46,6 +49,9 @@ public class CpstcFsa {
 	
 	// METHODS
 	
+	/*
+	 * determines if FSA is in a valid format (e.g. A1A)
+	 */
 	private boolean determineIfValid()
 	{
 		boolean rtnBoolean = false;
@@ -60,7 +66,9 @@ public class CpstcFsa {
 	    return rtnBoolean;
 	}
 
-	// sets dpfName and major
+	/*
+	 *  determines and sets dpfName and if major
+	 */
 	public void determineDpfNameAndIfMajor()
 	{	
 		NodeList dpfNodeData = CpstcFileParser.getDpfNodes();
@@ -75,7 +83,9 @@ public class CpstcFsa {
 		    String listOfMajorFsa = dpfNodeData.item(listOfMajorFsaIndex).getTextContent().replaceAll("\\s","");
 			if (listOfMajorFsa.contains(fsaName) || determineIfRangedListContainsFsa(listOfMajorFsa))
 			{
-				major = false;
+				// is major
+				
+				major = true;
 				dpfName = tmpDpfName;
 				break;
 			}
@@ -83,6 +93,8 @@ public class CpstcFsa {
 		    String listOfNonMajorFsa = dpfNodeData.item(listOfNonMajorFsaIndex).getTextContent().replaceAll("\\s","");
 			if (listOfNonMajorFsa.contains(fsaName) || determineIfRangedListContainsFsa(listOfNonMajorFsa))
 			{
+				// is minor
+				
 				major = false;
 				dpfName = tmpDpfName;
 				break;
@@ -90,8 +102,10 @@ public class CpstcFsa {
 		}
 	}
 	
-	// checks a list containing a mix of individual and ranged FSAs
-	// and determines if the fsaName is contained within that list
+	/*
+	 *  checks a list containing a mix of individual and ranged FSAs
+	 *  and determines if the fsaName is contained within that list
+	 */
 	private boolean determineIfRangedListContainsFsa( String listToCheck)
 	{
 		boolean rtnBoolean = false;

@@ -16,6 +16,9 @@ import org.w3c.dom.Document;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
+/* This class parses local html tables into RAM for use by the application's
+ * various lookups.
+ */
 public class CpstcFileParser {
 	
 	// paths for html files pulled from Canada Post's website
@@ -26,14 +29,22 @@ public class CpstcFileParser {
 	private static final String dirtyDpfHtmlFilePath = "/tmp/brian/canadaShipping/dpfLookup.html";
 	private static final String cleanDpfHtmlFilePath = "/tmp/brian/canadaShipping/dpfLookup.xml";
 	
+	private static final String dirtyXpresspostUsaDpfHtmlPath = "/tmp/brian/tmp/xpresspostUsaDpfLookup.html";
+	private static final String cleanXpresspostUsaDpfHtmlPath = "/tmp/brian/tmp/xpresspostUsaDpfLookup.html"; // not necessary to use cleaned xml file for now
+	
 	// Data for postal source/destinations definitions
 	private static NodeList remoteNodes;
 	private static NodeList dpfNodes;
 	private static NodeList majorUsCities;
+	private static NodeList xpresspostUsaDpfNodes;
 
 	
 	// GETTERS & SETTERS
 	
+	public static NodeList getXpresspostUsaDpfNodes() {
+		return xpresspostUsaDpfNodes;
+	}
+
 	public static NodeList getRemoteNodes()
 	{
 		return remoteNodes;
@@ -96,6 +107,36 @@ public class CpstcFileParser {
 			XPathExpression expr = xpath.compile("//tr/td");
 		    Object result = expr.evaluate(doc, XPathConstants.NODESET);
 		    dpfNodes = (NodeList) result;			    
+	
+		} catch (SAXException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (ParserConfigurationException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (XPathExpressionException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+	
+	public static void parseXpresspostUsaDpfNodesFile()
+	{
+		try {
+			DocumentBuilderFactory docBuilderFactory = DocumentBuilderFactory.newInstance();
+			docBuilderFactory.setNamespaceAware(true); // never forget this!
+			DocumentBuilder builder = docBuilderFactory.newDocumentBuilder();
+			CpstcHtmlCleaner.cleanHtmlFile(new File(dirtyXpresspostUsaDpfHtmlPath));
+			Document doc = builder.parse(cleanXpresspostUsaDpfHtmlPath);
+			XPathFactory factory = XPathFactory.newInstance();
+			XPath xpath = factory.newXPath();
+			
+			XPathExpression expr = xpath.compile("//tr/td");
+		    Object result = expr.evaluate(doc, XPathConstants.NODESET);
+		    xpresspostUsaDpfNodes = (NodeList) result;			    
 	
 		} catch (SAXException e) {
 			// TODO Auto-generated catch block

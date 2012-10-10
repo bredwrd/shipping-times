@@ -7,7 +7,7 @@ import java.util.HashSet;
 import java.util.Map;
 
 import javax.faces.bean.ManagedBean;
-import javax.faces.bean.ViewScoped;
+import javax.faces.bean.SessionScoped;
 import javax.faces.event.ActionEvent;
 
 
@@ -18,7 +18,7 @@ import net.objectlab.kit.datecalc.jdk.DateKitCalculatorsFactory;
 
 
 @ManagedBean(name= "home")
-@ViewScoped
+@SessionScoped
 public class CpstcHomeBean implements Serializable {
 	
 	// VARIABLES
@@ -202,54 +202,65 @@ public class CpstcHomeBean implements Serializable {
 	 */
 	public void submitAction(ActionEvent evt)
 	{	
-		// DEBUG
-		System.out.println("Selected state: " + userSelectedUsStateCode);
-		
 		pageResult = "";
 		totalTime = 0;
 		rangedArrivalDate = false;
 		
+		// Origin input; common for all destinations and shipping type
 		sentDate = selectedInputDate;
 		CpstcPostalCode userOriginPostalCode = new CpstcPostalCode(userOriginPcName);
-		CpstcPostalCode userDestinationPostalCode = new CpstcPostalCode(userDestinationPcName);
 		
-		userOriginDpfName = userOriginPostalCode.getDpfName();
-		userDestinationDpfName = userDestinationPostalCode.getDpfName();
-		
-		int sourceIndex = CpstcDedicatedProcessingFacility.getIndexOf(userOriginDpfName);
-		try {
-			baseTime = dpfGrid[sourceIndex].getBaseTime(userDestinationDpfName);
-			totalTime += baseTime;
-			pageResult = Integer.toString(baseTime);
-			// for now, do not differentiate between which PC (source or dest.)
-			// is remote, but it would be possible.
-			if (userOriginPostalCode.getRemote() || userDestinationPostalCode.getRemote())
-			{
-				// is remote transaction
-				totalTime += remoteTime;
-				rangedArrivalDate = true;
-			}
-			
-			// handle ranged arrival time due to remote PC
-			calculatedArrivalBeginDate = addBusinessDays(baseTime);
-			if (rangedArrivalDate)
-			{
-				pageResult += " to " + Integer.toString(baseTime + remoteTime);
-				calculatedArrivalEndDate = addBusinessDays(totalTime);
-			} else
-			{
-				calculatedArrivalEndDate = calculatedArrivalBeginDate;
-			}
-
-			// display resulting output
-			selectedOutputDate = calculatedArrivalEndDate;
-			pageResult += " business days";
-			displayOutput = true;
-			
-		} catch(ArrayIndexOutOfBoundsException e)
+		if (destinationType.equals("Domestic") && shippingType.equals("Lettermail"))
 		{
-			pageResult = "Source or destination not found.";
+
+			CpstcPostalCode userDestinationPostalCode = new CpstcPostalCode(userDestinationPcName);
+			
+			userOriginDpfName = userOriginPostalCode.getDpfName();
+			userDestinationDpfName = userDestinationPostalCode.getDpfName();
+			
+			int sourceIndex = CpstcDedicatedProcessingFacility.getIndexOf(userOriginDpfName);
+			try {
+				baseTime = dpfGrid[sourceIndex].getBaseTime(userDestinationDpfName);
+				totalTime += baseTime;
+				pageResult = Integer.toString(baseTime);
+				// for now, do not differentiate between which PC (source or dest.)
+				// is remote, but it would be possible.
+				if (userOriginPostalCode.getRemote() || userDestinationPostalCode.getRemote())
+				{
+					// is remote transaction
+					totalTime += remoteTime;
+					rangedArrivalDate = true;
+				}
+				
+				// handle ranged arrival time due to remote PC
+				calculatedArrivalBeginDate = addBusinessDays(baseTime);
+				if (rangedArrivalDate)
+				{
+					pageResult += " to " + Integer.toString(baseTime + remoteTime);
+					calculatedArrivalEndDate = addBusinessDays(totalTime);
+				} else
+				{
+					calculatedArrivalEndDate = calculatedArrivalBeginDate;
+				}
+
+				// display resulting output
+				selectedOutputDate = calculatedArrivalEndDate;
+				pageResult += " business days";
+				displayOutput = true;
+				
+			} catch(ArrayIndexOutOfBoundsException e)
+			{
+				pageResult = "Source or destination not found.";
+			}
+		} else if (destinationType.equals("USA") && shippingType.equals("Xpresspost"))
+		{
+			System.out.println("USA! USA! USA!");
+			String tmpOutgoingDpfNode = userOriginPostalCode.determineXpresspostUsaOutgoingDpfNode();
 		}
+		
+
+		
+
 	}
     
     /*
@@ -281,7 +292,12 @@ public class CpstcHomeBean implements Serializable {
     {
 		Map<String, Object> attributes = evt.getComponent().getAttributes();
 		String selectedShippingType = (String) attributes.get("shippingType");
+    	// TODO- figure out why it's not reaching this line
 		String selectedDestinationType = (String) attributes.get("destinationType");
+		
+    	// Debug
+    	System.out.println("Hello, changeUserSelectedShippingType!");
+    	System.out.println("Changing to: " + selectedShippingType + " to " + selectedDestinationType);
 		
 		if (selectedDestinationType.equals("Domestic"))
 		{
